@@ -1,10 +1,10 @@
 # juegofinal
 
-## Project Overview
+## Overview
 
-juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev/) 3.0. It showcases simple command handlers and how to persist user data with SQLite. The bot supports registering users via the `/start` command and displaying profile details with `/profile`.
+juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev/) 3.0. It shows how to implement basic command handlers, persist user data in SQLite and log updates. The bot lets users register with `/start` and check their stats with `/profile` and `/level`.
 
-## Setup Instructions
+## Setup instructions
 
 1. **Clone the repository**
    ```bash
@@ -21,34 +21,41 @@ juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev
    pip install -r requirements.txt
    ```
 4. **Configure your bot token**
-   Create a `.env` file or export the `BOT_TOKEN` environment variable with the token provided by [BotFather](https://t.me/BotFather):
+   Copy `.env.example` to `.env` and put the token given by [BotFather](https://t.me/BotFather):
    ```bash
-   echo "BOT_TOKEN=your-telegram-bot-token" > .env
+   cp .env.example .env
+   # edit .env and set BOT_TOKEN
    ```
-5. **Run the bot**
-   ```bash
-   python main.py
-   ```
+
+## How to run the bot
+
+Run the main module:
+```bash
+python main.py
+```
 
 ## Features
 
-- `/start` command that stores basic user information in SQLite and sends a welcome message with an inline menu.
-- `/profile` command that replies with the user's level, points and join date.
-- `/level` command that reports the current level and points.
-- `PointService` utility for managing registration and daily bonus points.
-- Basic echo handler for all other messages.
-- Configuration via `pydantic-settings` and a local `.env` file.
+- `/start` registers the user in SQLite and displays an inline menu.
+- `/profile` shows a user's level, points and join date.
+- `/level` reports the current level and points.
+- `/help` explains available commands.
+- Basic echo handler for any other message.
+- `PointService` for registration and daily bonus points.
+- Logging middleware writes errors to `logs/errors.log`.
 
-## Development Instructions
+## Folder structure
 
-- Make sure all Python files compile:
-  ```bash
-  python -m py_compile $(git ls-files '*.py')
-  ```
-- Run the bot locally using `python main.py` while developing new handlers or services.
-- Contributions are welcome via pull requests.
-
-## Notes
-
-- `PointService` guarda los puntos de los usuarios en memoria, por lo que se pierden al reiniciar el bot.
+```
+├── bot.py            # Bot and dispatcher initialization
+├── config.py         # pydantic settings loader
+├── database/         # SQLAlchemy models and database setup
+├── handlers/         # Command handlers grouped by feature
+├── logs/             # Log files
+├── services/         # Business logic such as PointService
+├── utils/            # Middleware and helper utilities
+├── main.py           # Entry point that starts polling
+├── requirements.txt  # Python dependencies
+└── .env.example      # Sample environment configuration
+```
 
