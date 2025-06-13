@@ -42,6 +42,9 @@ python main.py
 - `/badges` lists earned badges.
 - `/ranking` or `/leaderboard` shows the top users by points.
 - `/help` explains available commands.
+- `/menu` displays options depending on whether you are an admin.
+- `/feedback` lets users react with inline buttons.
+- `/poll` creates a simple yes/no poll that admins can close.
 - Basic echo handler for any other message.
 - `PointService` for registration and daily bonus points.
 - Logging middleware writes errors to `logs/errors.log`.
