@@ -39,6 +39,22 @@ class PointService:
         """Simple budget calculation derived from points."""
         return self.get_points(user_id) // 10
 
+    def get_leaderboard(self, limit: int = 10) -> list[tuple[str, int]]:
+        """Return top users sorted by points."""
+        return sorted(
+            self._points.items(), key=lambda x: x[1], reverse=True
+        )[:limit]
+
+    def get_position(self, user_id: str) -> int:
+        """Return the ranking position for a user (1-indexed)."""
+        sorted_users = sorted(
+            self._points.items(), key=lambda x: x[1], reverse=True
+        )
+        for index, (uid, _) in enumerate(sorted_users, start=1):
+            if uid == user_id:
+                return index
+        return len(sorted_users) + 1
+
 
 # Shared instance used across handlers
 point_service = PointService()
