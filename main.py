@@ -6,10 +6,12 @@ from aiogram.filters import Command
 from handlers.user.start import router as start_router
 from handlers.user.profile import router as profile_router
 from handlers.user.level import router as level_router
+from handlers.user.badges import router as badges_router
 
 dp.include_router(start_router)
 dp.include_router(profile_router)
 dp.include_router(level_router)
+dp.include_router(badges_router)
 
 
 @dp.message(Command("help"))
@@ -20,6 +22,7 @@ async def help_handler(message: types.Message) -> None:
         "/start - Register and open menu\n"
         "/profile - Show your profile\n"
         "/level - Get your level and points\n"
+        "/badges - List your badges\n"
         "/help - Show this message"
     )
     await message.answer(instructions)

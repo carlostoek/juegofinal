@@ -3,6 +3,7 @@ from aiogram.types import Message
 
 from services.user_service import get_user
 from services.point_service import point_service
+from services.badge_service import check_level_badges
 
 router = Router()
 
@@ -16,6 +17,7 @@ async def profile_handler(message: Message) -> None:
 
     points = point_service.get_points(str(user.id))
     level = point_service.get_level(str(user.id))
+    await check_level_badges(user.id, level)
     rewards = point_service.get_rewards(str(user.id))
     budget = point_service.get_budget(str(user.id))
 
