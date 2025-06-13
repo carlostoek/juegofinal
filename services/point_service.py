@@ -46,7 +46,12 @@ class PointService:
         """Simple budget calculation derived from points."""
         return self.get_points(user_id) // 10
 
-(self, limit: int = 10) -> list[tuple[str, int]]:
+    def get_badges(self, user_id: str) -> list[str]:
+        """Return list of badges earned based on point thresholds."""
+        points = self.get_points(user_id)
+        return [name for threshold, name in self.BADGE_THRESHOLDS if points >= threshold]
+
+    def get_leaderboard(self, limit: int = 10) -> list[tuple[str, int]]:
         """Return top users sorted by points."""
         return sorted(
             self._points.items(), key=lambda x: x[1], reverse=True
@@ -60,8 +65,7 @@ class PointService:
         for index, (uid, _) in enumerate(sorted_users, start=1):
             if uid == user_id:
                 return index
-        return len(sorted_user
-                 main
+        return len(sorted_users) + 1
 
 
 # Shared instance used across handlers
