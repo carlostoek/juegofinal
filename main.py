@@ -2,6 +2,20 @@ import asyncio
 
 from bot import bot, dp
 from aiogram import types
+from aiogram.filters import Command
+
+
+@dp.message(Command("help"))
+async def help_handler(message: types.Message) -> None:
+    """Send instructions for using the bot."""
+    instructions = (
+        "Available commands:\n"
+        "/start - Register and open menu\n"
+        "/profile - Show your profile\n"
+        "/level - Get your level and points\n"
+        "/help - Show this message"
+    )
+    await message.answer(instructions)
 
 
 @dp.message()
