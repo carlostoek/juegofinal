@@ -2,6 +2,8 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
+from utils import MSG
+
 from services.point_service import point_service
 from services.user_service import get_user
 
@@ -22,6 +24,6 @@ async def ranking_handler(message: Message) -> None:
     user_position = point_service.get_position(user_id)
     user_points = point_service.get_points(user_id)
 
-    response = "Top 10 users:\n" + "\n".join(lines)
-    response += f"\n\nYour position: {user_position} with {user_points} points"
+    response = MSG.RANKING_HEADER + "\n".join(lines)
+    response += MSG.RANKING_POSITION.format(position=user_position, points=user_points)
     await message.answer(response)
