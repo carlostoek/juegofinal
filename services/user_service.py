@@ -59,34 +59,3 @@ async def get_user(user_id: int) -> User | None:
         )
     finally:
         conn.close()
-
-
-async def list_users() -> list[User]:
-    """Return all registered users."""
-    conn = _get_connection()
-    try:
-        cur = conn.execute(
-            "SELECT id, username, full_name, join_date FROM users ORDER BY join_date"
-        )
-        rows = cur.fetchall()
-        return [
-            User(
-                id=row[0],
-                username=row[1],
-                full_name=row[2],
-                join_date=datetime.fromisoformat(row[3]),
-            )
-            for row in rows
-        ]
-    finally:
-        conn.close()
-
-
-async def remove_user(user_id: int) -> None:
-    """Delete a user from the database."""
-    conn = _get_connection()
-    try:
-        with conn:
-            conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    finally:
-        conn.close()
