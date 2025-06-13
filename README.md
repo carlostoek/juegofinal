@@ -7,3 +7,6 @@ record from the database and replies with a formatted welcome message.
 ## Handlers
 
 - `handlers/user/profile.py` – defines the `/profile` command handler.
+
+## Commit instructions
+When contributing, ensure you have no untracked files with `git status`, and run tests if available before creating a pull request.
