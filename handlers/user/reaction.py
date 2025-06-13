@@ -23,7 +23,8 @@ async def send_feedback(message: Message) -> None:
     await message.answer(MSG.FEEDBACK_QUESTION, reply_markup=keyboard)
 
 
-@router.callback_query(F.data.in_("react_up", "react_down"))
+# Filter callback data for both up and down reactions
+@router.callback_query(F.data.in_(["react_up", "react_down"]))
 async def handle_reaction(query: CallbackQuery) -> None:
     """Update reaction counts and acknowledge the user."""
     if query.message:
