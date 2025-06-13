@@ -47,3 +47,7 @@ juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev
 - Run the bot locally using `python main.py` while developing new handlers or services.
 - Contributions are welcome via pull requests.
 
+## Notes
+
+- `PointService` guarda los puntos de los usuarios en memoria, por lo que se pierden al reiniciar el bot.
+
