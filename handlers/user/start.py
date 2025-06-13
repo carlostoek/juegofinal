@@ -3,6 +3,7 @@ from datetime import datetime
 from aiogram import Router, types
 from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram import F
 
 from services.user_service import add_user
 from services.point_service import point_service
@@ -25,12 +26,23 @@ async def start(message: types.Message):
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Profile", callback_data="profile")],
-            [InlineKeyboardButton(text="Help", callback_data="help")],
-            [InlineKeyboardButton(text="Level", callback_data="level")],
+            [InlineKeyboardButton(text="Configuración", callback_data="config")],
+            [InlineKeyboardButton(text="Administración", callback_data="admin")],
         ]
     )
 
     await message.answer(
-        f"Welcome, {user.full_name}!", reply_markup=keyboard
+        f"Bienvenido, {user.full_name}!", reply_markup=keyboard
     )
+
+
+@router.callback_query(F.data == "config")
+async def config_menu(callback: types.CallbackQuery) -> None:
+    await callback.message.answer("Menú de configuración (pendiente)")
+    await callback.answer()
+
+
+@router.callback_query(F.data == "admin")
+async def admin_menu(callback: types.CallbackQuery) -> None:
+    await callback.message.answer("Menú de administración (pendiente)")
+    await callback.answer()
