@@ -1,15 +1,17 @@
 from aiogram import Router, F
 from aiogram.types import Message
 
+from services.badge_service import get_badges
+
 router = Router()
 
 
 @router.message(F.text == "/badges")
 async def badges_handler(message: Message) -> None:
- codex/commit-badge-system-and-/badges-command-changes
-    badges = point_service.get_badges(str(message.from_user.id))
-    if badges:
-        lines = "\n".join(f"\U0001F396 {b}" for b in badges)
-        await message.answer(f"Your badges:\n{lines}")
-    else:
-        await message.answer("You have no badges yet. Keep earning points!")
+    badges = await get_badges(message.from_user.id)
+    if not badges:
+        await message.answer("You have no badges yet.")
+        return
+
+    lines = [f"{b.name} - {b.description} ({b.date_awarded.date()})" for b in badges]
+    await message.answer("Your badges:\n" + "\n".join(lines))
