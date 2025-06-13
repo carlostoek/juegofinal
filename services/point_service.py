@@ -8,6 +8,13 @@ class PointService:
     REGISTRATION_BONUS = 10
     DAILY_BONUS = 1
 
+    # Thresholds for awarding badges based on total points
+    BADGE_THRESHOLDS = [
+        (50, "Bronze"),
+        (200, "Silver"),
+        (500, "Gold"),
+    ]
+
     def __init__(self) -> None:
         # Map user identifiers to their point totals
         self._points: Dict[str, int] = {}
@@ -39,7 +46,7 @@ class PointService:
         """Simple budget calculation derived from points."""
         return self.get_points(user_id) // 10
 
-    def get_leaderboard(self, limit: int = 10) -> list[tuple[str, int]]:
+(self, limit: int = 10) -> list[tuple[str, int]]:
         """Return top users sorted by points."""
         return sorted(
             self._points.items(), key=lambda x: x[1], reverse=True
@@ -53,7 +60,8 @@ class PointService:
         for index, (uid, _) in enumerate(sorted_users, start=1):
             if uid == user_id:
                 return index
-        return len(sorted_users) + 1
+        return len(sorted_user
+                 main
 
 
 # Shared instance used across handlers
