@@ -30,3 +30,15 @@ class PointService:
         """Return the user's level based on their points."""
         points = self.get_points(user_id)
         return math.floor(points / 100)
+
+    def get_rewards(self, user_id: str) -> int:
+        """Return number of rewards earned based on points."""
+        return self.get_points(user_id) // 50
+
+    def get_budget(self, user_id: str) -> int:
+        """Simple budget calculation derived from points."""
+        return self.get_points(user_id) // 10
+
+
+# Shared instance used across handlers
+point_service = PointService()

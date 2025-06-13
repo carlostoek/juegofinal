@@ -1,5 +1,16 @@
 import sqlite3
+from dataclasses import dataclass
 from datetime import datetime
+
+
+@dataclass
+class User:
+    """Simple user representation."""
+
+    id: int
+    username: str
+    full_name: str
+    join_date: datetime
 
 DB_PATH = 'bot.db'
 
@@ -25,5 +36,26 @@ async def add_user(user_id: int, username: str, full_name: str, join_date: datet
                 "INSERT OR REPLACE INTO users (id, username, full_name, join_date) VALUES (?, ?, ?, ?)",
                 (user_id, username, full_name, join_date.isoformat()),
             )
+    finally:
+        conn.close()
+
+
+async def get_user(user_id: int) -> User | None:
+    """Retrieve a user from the database."""
+    conn = _get_connection()
+    try:
+        cur = conn.execute(
+            "SELECT id, username, full_name, join_date FROM users WHERE id = ?",
+            (user_id,),
+        )
+        row = cur.fetchone()
+        if row is None:
+            return None
+        return User(
+            id=row[0],
+            username=row[1],
+            full_name=row[2],
+            join_date=datetime.fromisoformat(row[3]),
+        )
     finally:
         conn.close()
