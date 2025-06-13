@@ -1,4 +1,5 @@
-from aiogram import Router, F
+from aiogram import Router
+from aiogram.filters import Command
 from aiogram.types import Message
 
 from services.point_service import point_service
@@ -7,7 +8,8 @@ from services.user_service import get_user
 router = Router()
 
 
-@router.message(F.text == "/ranking")
+@router.message(Command("ranking"))
+@router.message(Command("leaderboard"))
 async def ranking_handler(message: Message) -> None:
     user_id = str(message.from_user.id)
     leaderboard = point_service.get_leaderboard(10)
