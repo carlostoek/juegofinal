@@ -42,8 +42,6 @@ python main.py
 - `/badges` lists earned badges.
 - `/ranking` or `/leaderboard` shows the top users by points.
 - `/help` explains available commands.
-- `/config` opens tariff configuration.
-- `/admin` provides administration tools.
 - Basic echo handler for any other message.
 - `PointService` for registration and daily bonus points.
 - Logging middleware writes errors to `logs/errors.log`.
