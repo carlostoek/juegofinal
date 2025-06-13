@@ -5,6 +5,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from services.user_service import add_user
+from services.point_service import point_service
 
 router = Router()
 
@@ -19,6 +20,8 @@ async def start(message: types.Message):
         full_name=user.full_name,
         join_date=message.date or datetime.utcnow(),
     )
+    # add registration points
+    point_service.register_user(str(user.id))
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
