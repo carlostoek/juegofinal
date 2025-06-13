@@ -40,6 +40,7 @@ python main.py
 - `/profile` shows a user's level, points and join date.
 - `/level` reports the current level and points.
 - `/badges` lists earned badges.
+- `/ranking` shows the top users by points.
 - `/help` explains available commands.
 - Basic echo handler for any other message.
 - `PointService` for registration and daily bonus points.

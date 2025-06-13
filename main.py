@@ -7,11 +7,13 @@ from handlers.user.start import router as start_router
 from handlers.user.profile import router as profile_router
 from handlers.user.level import router as level_router
 from handlers.user.badges import router as badges_router
+from handlers.user.ranking import router as ranking_router
 
 dp.include_router(start_router)
 dp.include_router(profile_router)
 dp.include_router(level_router)
 dp.include_router(badges_router)
+dp.include_router(ranking_router)
 
 
 @dp.message(Command("help"))
