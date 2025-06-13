@@ -34,6 +34,7 @@ juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev
 
 - `/start` command that stores basic user information in SQLite and sends a welcome message with an inline menu.
 - `/profile` command that replies with the user's level, points and join date.
+- `/level` command that reports the current level and points.
 - `PointService` utility for managing registration and daily bonus points.
 - Basic echo handler for all other messages.
 - Configuration via `pydantic-settings` and a local `.env` file.
