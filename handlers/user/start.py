@@ -3,10 +3,14 @@ from datetime import datetime
 from aiogram import Router, types
 from aiogram.filters import CommandStart, Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram import F
+
+from utils import MSG
 
 from services.user_service import add_user
 from services.point_service import point_service
 from config import settings
+
 
 router = Router()
 
@@ -28,6 +32,12 @@ def build_menu(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
+def back_markup() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[InlineKeyboardButton(text=MSG.BACK, callback_data="back")]]
+    )
+
+
 @router.message(CommandStart())
 async def start(message: types.Message):
     user = message.from_user
@@ -44,7 +54,7 @@ async def start(message: types.Message):
     keyboard = build_menu(user.id)
 
     await message.answer(
-        f"Welcome, {user.full_name}!", reply_markup=keyboard
+        MSG.WELCOME.format(name=user.full_name), reply_markup=keyboard
     )
 
 
@@ -52,4 +62,11 @@ async def start(message: types.Message):
 async def menu(message: types.Message) -> None:
     """Show the main menu again."""
     keyboard = build_menu(message.from_user.id)
-    await message.answer("Men\u00fa:", reply_markup=keyboard)
+    await message.answer(MSG.MENU, reply_markup=keyboard)
+
+
+@router.callback_query(F.data == "back")
+async def back_to_menu(query: types.CallbackQuery) -> None:
+    keyboard = build_menu(query.from_user.id)
+    await query.message.edit_text(MSG.MENU, reply_markup=keyboard)
+    await query.answer()

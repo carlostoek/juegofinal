@@ -3,6 +3,7 @@ import asyncio
 from bot import bot, dp
 from aiogram import types
 from aiogram.filters import Command
+from utils import MSG
 from handlers.user.start import router as start_router
 from handlers.user.profile import router as profile_router
 from handlers.user.level import router as level_router
@@ -25,15 +26,7 @@ dp.include_router(menu_router)
 @dp.message(Command("help"))
 async def help_handler(message: types.Message) -> None:
     """Send instructions for using the bot."""
-    instructions = (
-        "Available commands:\n"
-        "/start - Register and open menu\n"
-        "/profile - Show your profile\n"
-        "/level - Get your level and points\n"
-        "/badges - List your badges\n"
-        "/help - Show this message"
-    )
-    await message.answer(instructions)
+    await message.answer(MSG.HELP)
 
 
 @dp.message()

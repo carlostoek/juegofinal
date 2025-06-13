@@ -2,6 +2,8 @@ from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Message
 
+from utils import MSG
+
 from services.reaction_service import reaction_service
 
 router = Router()
@@ -18,7 +20,7 @@ async def send_feedback(message: Message) -> None:
             ]
         ]
     )
-    await message.answer("\u00bfTe gusta este bot?", reply_markup=keyboard)
+    await message.answer(MSG.FEEDBACK_QUESTION, reply_markup=keyboard)
 
 
 @router.callback_query(F.data.in_("react_up", "react_down"))

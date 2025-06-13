@@ -1,6 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message
 
+from utils import MSG
+
 from services.point_service import point_service
 from services.badge_service import check_level_badges
 
@@ -13,4 +15,4 @@ async def level_handler(message: Message) -> None:
     level = point_service.get_level(str(user_id))
     points = point_service.get_points(str(user_id))
     await check_level_badges(user_id, level)
-    await message.answer(f"You are level {level} with {points} points")
+    await message.answer(MSG.LEVEL.format(level=level, points=points))
