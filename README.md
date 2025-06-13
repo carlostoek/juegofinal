@@ -2,7 +2,7 @@
 
 ## Overview
 
-juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev/) 3.0. It shows how to implement basic command handlers, persist user data in SQLite and log updates. The bot lets users register with `/start` and check their stats with `/profile` and `/level`.
+juegofinal is a small Telegram bot built with [aiogram](https://docs.aiogram.dev/) 3.0. It shows how to implement basic command handlers, persist user data in SQLite and log updates. The bot lets users register with `/start` and check their stats with `/profile`, `/level` and `/badges`.
 
 ## Setup instructions
 
@@ -39,6 +39,7 @@ python main.py
 - `/start` registers the user in SQLite and displays an inline menu.
 - `/profile` shows a user's level, points and join date.
 - `/level` reports the current level and points.
+- `/badges` lists earned badges.
 - `/help` explains available commands.
 - Basic echo handler for any other message.
 - `PointService` for registration and daily bonus points.

@@ -8,6 +8,13 @@ class PointService:
     REGISTRATION_BONUS = 10
     DAILY_BONUS = 1
 
+    # Thresholds for awarding badges based on total points
+    BADGE_THRESHOLDS = [
+        (50, "Bronze"),
+        (200, "Silver"),
+        (500, "Gold"),
+    ]
+
     def __init__(self) -> None:
         # Map user identifiers to their point totals
         self._points: Dict[str, int] = {}
@@ -38,6 +45,12 @@ class PointService:
     def get_budget(self, user_id: str) -> int:
         """Simple budget calculation derived from points."""
         return self.get_points(user_id) // 10
+
+    def get_badges(self, user_id: str) -> list[str]:
+        """Return list of badges earned based on point thresholds."""
+        points = self.get_points(user_id)
+        badges = [name for threshold, name in self.BADGE_THRESHOLDS if points >= threshold]
+        return badges
 
 
 # Shared instance used across handlers
