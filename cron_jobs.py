@@ -6,6 +6,7 @@ import aiosqlite
 from db.database import DB_PATH
 from services.point_service import PointService
 from services.badge_service import BadgeService
+from services.mission_service import MissionService
 
 
 class Scheduler:
@@ -61,4 +62,21 @@ async def award_permanence_points_job(bot) -> None:
             if badge_id and new_streak % 7 == 0:
                 await badge_service.award_badge(user_id, badge_id)
         await db.commit()
+
+
+async def check_and_award_missions(bot) -> None:
+    mission_service = MissionService()
+    now = datetime.utcnow().isoformat()
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT mission_id FROM missions WHERE (active_from IS NULL OR active_from<=?) AND (active_until IS NULL OR active_until>=?)",
+            (now, now),
+        )
+        missions = await cursor.fetchall()
+        user_cur = await db.execute("SELECT user_id FROM users")
+        users = await user_cur.fetchall()
+    for (mission_id,) in missions:
+        for (user_id,) in users:
+            if await mission_service.check_user_mission_completion(user_id, mission_id, {}):
+                await mission_service.complete_mission(user_id, mission_id)
 
