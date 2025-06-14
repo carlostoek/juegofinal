@@ -7,6 +7,8 @@ from db.database import DB_PATH
 from services.point_service import PointService
 from services.badge_service import BadgeService
 from services.mission_service import MissionService
+from services.auction_service import AuctionService
+import random
 
 
 class Scheduler:
@@ -79,4 +81,52 @@ async def check_and_award_missions(bot) -> None:
         for (user_id,) in users:
             if await mission_service.check_user_mission_completion(user_id, mission_id, {}):
                 await mission_service.complete_mission(user_id, mission_id)
+
+
+async def finalize_auctions_job(bot) -> None:
+    auction_service = AuctionService()
+    now = datetime.utcnow().isoformat()
+    async with aiosqlite.connect(str(DB_PATH)) as db:
+        cursor = await db.execute(
+            "SELECT auction_id FROM auctions WHERE status='active' AND end_time<=?",
+            (now,),
+        )
+        auctions = await cursor.fetchall()
+    for (auction_id,) in auctions:
+        await auction_service.finalize_auction(auction_id, bot)
+
+
+async def run_monthly_raffle(bot) -> None:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
+        cur = await db.execute("SELECT user_id, points FROM users")
+        data = await cur.fetchall()
+    if not data:
+        return
+    users, weights = zip(*data)
+    winner = random.choices(users, weights=weights, k=1)[0]
+    await bot.send_message(winner, "\ud83c\udf89 Ganaste el sorteo mensual!")
+
+
+async def run_weekly_mini_raffle(bot) -> None:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
+        cursor = await db.execute(
+            "SELECT user_id FROM weekly_ranking_activity ORDER BY total_activity_points DESC LIMIT 10"
+        )
+        rows = await cursor.fetchall()
+    if rows:
+        winner = random.choice([r[0] for r in rows])
+        await bot.send_message(winner, "\ud83c\udf81 Ganaste el mini sorteo semanal!")
+
+
+async def update_weekly_activity_ranking(bot=None) -> None:
+    week = datetime.utcnow().isocalendar()[1]
+    async with aiosqlite.connect(str(DB_PATH)) as db:
+        cur = await db.execute("SELECT user_id, weekly_streak_permanence, total_spent FROM users")
+        rows = await cur.fetchall()
+        for user_id, activity, spent in rows:
+            await db.execute(
+                "INSERT INTO weekly_ranking_activity(user_id, week_number, total_activity_points, total_purchase_amount) VALUES (?,?,?,?)",
+                (user_id, week, activity or 0, spent or 0.0),
+            )
+        await db.commit()
 

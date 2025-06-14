@@ -13,6 +13,10 @@ from cron_jobs import (
     daily_reset_interaction_limit,
     award_permanence_points_job,
     check_and_award_missions,
+    finalize_auctions_job,
+    run_monthly_raffle,
+    run_weekly_mini_raffle,
+    update_weekly_activity_ranking,
 )
 
 
@@ -44,6 +48,10 @@ async def on_startup(bot: Bot) -> None:
     scheduler.add_daily_job(daily_reset_interaction_limit)
     scheduler.add_daily_job(award_permanence_points_job)
     scheduler.add_daily_job(check_and_award_missions)
+    scheduler.add_daily_job(finalize_auctions_job)
+    scheduler.add_daily_job(run_monthly_raffle)
+    scheduler.add_daily_job(run_weekly_mini_raffle)
+    scheduler.add_daily_job(update_weekly_activity_ranking)
     dp.loop.create_task(scheduler.start(bot))
     logging.info("Bot started")
 

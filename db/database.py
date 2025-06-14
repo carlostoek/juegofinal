@@ -160,6 +160,62 @@ async def init_db() -> None:
             )
             """
         )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS auctions (
+                auction_id INTEGER PRIMARY KEY,
+                item_name TEXT,
+                description TEXT,
+                start_time TEXT,
+                end_time TEXT,
+                winner_user_id INTEGER,
+                winning_bid INTEGER,
+                status TEXT DEFAULT 'active'
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS bids (
+                bid_id INTEGER PRIMARY KEY,
+                auction_id INTEGER,
+                user_id INTEGER,
+                bid_amount INTEGER,
+                bid_time TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS daily_gifts (
+                gift_id INTEGER PRIMARY KEY,
+                description TEXT,
+                points_reward INTEGER,
+                gift_type TEXT,
+                content TEXT,
+                active_date TEXT UNIQUE
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS claimed_daily_gifts (
+                user_id INTEGER,
+                gift_id INTEGER,
+                claimed_date TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS weekly_ranking_activity (
+                user_id INTEGER,
+                week_number INTEGER,
+                total_activity_points INTEGER,
+                total_purchase_amount REAL
+            )
+            """
+        )
         await db.commit()
 
 async def create_user(user_id: int, username: str | None, full_name: str) -> None:
