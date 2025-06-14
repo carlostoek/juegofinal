@@ -6,6 +6,7 @@ from config import BOT_TOKEN
 from handlers import register_handlers
 from middlewares.logging_middleware import LoggingMiddleware
 from db.database import init_db
+from cron_jobs import Scheduler, daily_reset_interaction_limit, award_permanence_points_job
 
 
 logging.basicConfig(
@@ -20,6 +21,7 @@ logging.basicConfig(
 bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 dp.update.middleware(LoggingMiddleware())
+scheduler = Scheduler()
 
 
 def register_all_handlers() -> None:
@@ -28,6 +30,9 @@ def register_all_handlers() -> None:
 
 async def on_startup(bot: Bot) -> None:
     await init_db()
+    scheduler.add_daily_job(daily_reset_interaction_limit)
+    scheduler.add_daily_job(award_permanence_points_job)
+    dp.loop.create_task(scheduler.start(bot))
     logging.info("Bot started")
 
 
