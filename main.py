@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.client.bot import DefaultBotProperties
 
 from config import BOT_TOKEN
 from handlers import register_handlers
@@ -28,7 +29,7 @@ logging.basicConfig(
     ],
 )
 
-bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 dp.update.middleware(LoggingMiddleware())
 scheduler = Scheduler()
