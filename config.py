@@ -1,12 +1,7 @@
-from pydantic_settings import BaseSettings
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-class Settings(BaseSettings):
-    BOT_TOKEN: str
-
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-
-
-settings = Settings()
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "").split(',') if x]
