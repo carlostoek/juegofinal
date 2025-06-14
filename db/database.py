@@ -1,11 +1,14 @@
 import aiosqlite
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, Dict
 
-DB_PATH = "bot.db"
+# Use an absolute path for the database file so that it is
+# created consistently regardless of the working directory.
+DB_PATH = Path(__file__).resolve().parent / "bot.db"
 
 async def init_db() -> None:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         await db.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
@@ -168,7 +171,7 @@ async def init_db() -> None:
         await db.commit()
 
 async def create_user(user_id: int, username: str | None, full_name: str) -> None:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute("SELECT user_id FROM users WHERE user_id=?", (user_id,))
         if await cursor.fetchone():
             return
@@ -183,7 +186,7 @@ async def create_user(user_id: int, username: str | None, full_name: str) -> Non
         await db.commit()
 
 async def get_user(user_id: int) -> Optional[Dict]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute("SELECT * FROM users WHERE user_id=?", (user_id,))
         row = await cursor.fetchone()
         if row:
@@ -196,13 +199,13 @@ async def update_user_data(user_id: int, **kwargs) -> None:
         return
     fields = ", ".join(f"{k}=?" for k in kwargs)
     values = list(kwargs.values()) + [user_id]
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         await db.execute(f"UPDATE users SET {fields} WHERE user_id=?", values)
         await db.commit()
 
 
 async def get_level_for_points(points: int) -> Optional[Dict]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             """
             SELECT * FROM levels
@@ -219,7 +222,7 @@ async def get_level_for_points(points: int) -> Optional[Dict]:
 
 
 async def get_next_level(points: int) -> Optional[Dict]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT * FROM levels WHERE min_points>? ORDER BY min_points LIMIT 1",
             (points,),
@@ -232,7 +235,7 @@ async def get_next_level(points: int) -> Optional[Dict]:
 
 
 async def get_top_users(limit: int = 10) -> list[Dict]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT * FROM users ORDER BY points DESC LIMIT ?",
             (limit,),
@@ -243,7 +246,7 @@ async def get_top_users(limit: int = 10) -> list[Dict]:
 
 
 async def get_user_rank_position(user_id: int) -> Optional[int]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT points FROM users WHERE user_id=?",
             (user_id,),
@@ -263,7 +266,7 @@ async def get_user_rank_position(user_id: int) -> Optional[int]:
 
 
 async def get_last_daily_claim(user_id: int) -> Optional[str]:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT last_claim_date FROM daily_rewards WHERE user_id=?",
             (user_id,),
@@ -275,7 +278,7 @@ async def get_last_daily_claim(user_id: int) -> Optional[str]:
 
 
 async def update_daily_claim(user_id: int, claim_date: str) -> None:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT 1 FROM daily_rewards WHERE user_id=?",
             (user_id,),

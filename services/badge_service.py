@@ -7,7 +7,7 @@ from db.database import DB_PATH
 
 class BadgeService:
     async def award_badge(self, user_id: int, badge_id: int) -> None:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             await db.execute(
                 "INSERT INTO user_badges(user_id, badge_id, obtained_date) VALUES (?, ?, ?)",
                 (user_id, badge_id, datetime.utcnow().isoformat()),
@@ -15,7 +15,7 @@ class BadgeService:
             await db.commit()
 
     async def get_user_badges(self, user_id: int) -> List[Dict]:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 """
                 SELECT b.badge_id, b.name, b.description, b.image_url, ub.obtained_date
@@ -30,7 +30,7 @@ class BadgeService:
             return [dict(zip(columns, r)) for r in rows]
 
     async def check_level_badge(self, user_id: int, level_id: int) -> None:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 "SELECT 1 FROM user_badges WHERE user_id=? AND badge_id=?",
                 (user_id, level_id),
