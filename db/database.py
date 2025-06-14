@@ -55,6 +55,51 @@ async def init_db() -> None:
             )
             """
         )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS reactions_log (
+                log_id INTEGER PRIMARY KEY,
+                message_id INTEGER,
+                user_id INTEGER,
+                reaction_type TEXT,
+                reaction_date TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS daily_interaction_limits (
+                user_id INTEGER PRIMARY KEY,
+                interaction_count INTEGER,
+                last_reset_date TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS polls (
+                poll_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question TEXT,
+                creator_id INTEGER,
+                message_id INTEGER,
+                yes_count INTEGER DEFAULT 0,
+                no_count INTEGER DEFAULT 0,
+                is_active BOOLEAN DEFAULT 1,
+                created_at TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS poll_votes (
+                vote_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                poll_id INTEGER,
+                user_id INTEGER,
+                vote_type TEXT,
+                voted_at TEXT
+            )
+            """
+        )
         await db.commit()
 
 async def create_user(user_id: int, username: str | None, full_name: str) -> None:
