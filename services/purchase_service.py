@@ -10,7 +10,7 @@ class PurchaseService:
         self.point_service = PointService()
 
     async def record_purchase(self, user_id: int, amount_mxn: float, is_renewal: bool = False, is_early_renewal: bool = False) -> int:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 "INSERT INTO purchases(user_id, amount_mxn, points_awarded, purchase_date, is_renewal, is_early_renewal) VALUES (?,?,?,?,?,?)",
                 (user_id, amount_mxn, 0, datetime.utcnow().isoformat(), is_renewal, is_early_renewal),
@@ -27,7 +27,7 @@ class PurchaseService:
     async def award_purchase_points(self, user_id: int, amount_mxn: float) -> int:
         points = int(amount_mxn)
         await self.point_service.add_points(user_id, points, reason="purchase")
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             await db.execute(
                 "UPDATE purchases SET points_awarded=? WHERE user_id=? AND points_awarded=0 ORDER BY purchase_id DESC LIMIT 1",
                 (points, user_id),

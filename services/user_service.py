@@ -5,6 +5,8 @@ from db import database
 
 class UserService:
     async def register_user(self, user_id: int, username: str | None, full_name: str) -> Dict:
+        # Ensure the database schema exists before attempting to create users.
+        await database.init_db()
         await database.create_user(user_id, username, full_name)
         user = await database.get_user(user_id)
         return user

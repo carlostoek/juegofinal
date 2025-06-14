@@ -28,7 +28,7 @@ class Scheduler:
 
 async def daily_reset_interaction_limit(bot) -> None:
     today = datetime.utcnow().date().isoformat()
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         await db.execute(
             "UPDATE daily_interaction_limits SET interaction_count=0, last_reset_date=?",
             (today,),
@@ -39,7 +39,7 @@ async def daily_reset_interaction_limit(bot) -> None:
 async def award_permanence_points_job(bot) -> None:
     point_service = PointService()
     badge_service = BadgeService()
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT user_id, weekly_streak_permanence FROM users"
         )
@@ -67,7 +67,7 @@ async def award_permanence_points_job(bot) -> None:
 async def check_and_award_missions(bot) -> None:
     mission_service = MissionService()
     now = datetime.utcnow().isoformat()
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(str(DB_PATH)) as db:
         cursor = await db.execute(
             "SELECT mission_id FROM missions WHERE (active_from IS NULL OR active_from<=?) AND (active_until IS NULL OR active_until>=?)",
             (now, now),

@@ -37,7 +37,7 @@ class ReactionService:
 
     async def can_react_today(self, user_id: int) -> bool:
         today = datetime.utcnow().date().isoformat()
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 "SELECT interaction_count, last_reset_date FROM daily_interaction_limits WHERE user_id=?",
                 (user_id,),
@@ -51,7 +51,7 @@ class ReactionService:
             return count < 4  # 4 interactions * 5 points = 20
 
     async def record_reaction(self, message_id: int, user_id: int, reaction_type: str) -> None:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             await db.execute(
                 "INSERT INTO reactions_log(message_id, user_id, reaction_type, reaction_date) VALUES (?,?,?,?)",
                 (message_id, user_id, reaction_type, datetime.utcnow().isoformat()),

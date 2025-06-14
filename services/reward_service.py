@@ -15,7 +15,7 @@ class RewardService:
         self.badge_service = BadgeService()
 
     async def get_all_rewards(self) -> List[Dict]:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute("SELECT * FROM rewards")
             rows = await cursor.fetchall()
             cols = [c[0] for c in cursor.description]
@@ -25,7 +25,7 @@ class RewardService:
         user = await get_user(user_id)
         if not user:
             return False
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute("SELECT cost_points FROM rewards WHERE reward_id=?", (reward_id,))
             row = await cursor.fetchone()
             if not row:
@@ -36,7 +36,7 @@ class RewardService:
     async def redeem_reward(self, user_id: int, reward_id: int) -> bool:
         if not await self.can_afford(user_id, reward_id):
             return False
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute("SELECT cost_points FROM rewards WHERE reward_id=?", (reward_id,))
             row = await cursor.fetchone()
             if not row:
@@ -45,7 +45,7 @@ class RewardService:
         success = await self.point_service.deduct_points(user_id, cost)
         if not success:
             return False
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             await db.execute(
                 "INSERT INTO user_rewards(user_id, reward_id, purchase_date) VALUES (?,?,?)",
                 (user_id, reward_id, datetime.utcnow().isoformat()),
@@ -55,7 +55,7 @@ class RewardService:
         return True
 
     async def deliver_reward(self, user_id: int, reward_id: int, bot: Bot) -> None:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 "SELECT reward_type, content_data FROM rewards WHERE reward_id=?",
                 (reward_id,),
@@ -72,7 +72,7 @@ class RewardService:
             await bot.send_message(user_id, "Recompensa entregada")
 
     async def award_first_redeem_badge(self, user_id: int) -> None:
-        async with aiosqlite.connect(DB_PATH) as db:
+        async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(
                 "SELECT COUNT(*) FROM user_rewards WHERE user_id=?",
                 (user_id,),
