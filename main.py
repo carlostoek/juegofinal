@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 
@@ -14,13 +15,17 @@ from cron_jobs import (
 )
 
 
+BASE_DIR = Path(__file__).resolve().parent
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     handlers=[
-        logging.FileHandler("logs/errors.log"),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler(LOG_DIR / "errors.log"),
+        logging.StreamHandler(),
+    ],
 )
 
 bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
