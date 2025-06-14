@@ -39,24 +39,6 @@ class MissionService:
             )
             await db.commit()
 
-    async def get_active_mission(self) -> Dict | None:
-        now = datetime.utcnow().isoformat()
-        async with aiosqlite.connect(str(DB_PATH)) as db:
-            cursor = await db.execute(
-                """
-                SELECT * FROM missions
-                WHERE (active_from IS NULL OR active_from<=?)
-                AND (active_until IS NULL OR active_until>=?)
-                ORDER BY mission_id LIMIT 1
-                """,
-                (now, now),
-            )
-            row = await cursor.fetchone()
-            if row:
-                columns = [c[0] for c in cursor.description]
-                return dict(zip(columns, row))
-            return None
-
     async def check_user_mission_completion(self, user_id: int, mission_id: int, current_data: Dict) -> bool:
         async with aiosqlite.connect(str(DB_PATH)) as db:
             cursor = await db.execute(

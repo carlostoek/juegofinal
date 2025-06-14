@@ -139,14 +139,6 @@ async def init_db() -> None:
         )
         await db.execute(
             """
-            CREATE TABLE IF NOT EXISTS daily_rewards (
-                user_id INTEGER PRIMARY KEY,
-                last_claim_date TEXT
-            )
-            """
-        )
-        await db.execute(
-            """
             CREATE TABLE IF NOT EXISTS missions (
                 mission_id INTEGER PRIMARY KEY,
                 type TEXT,
@@ -263,34 +255,3 @@ async def get_user_rank_position(user_id: int) -> Optional[int]:
         if higher:
             return higher[0] + 1
         return 1
-
-
-async def get_last_daily_claim(user_id: int) -> Optional[str]:
-    async with aiosqlite.connect(str(DB_PATH)) as db:
-        cursor = await db.execute(
-            "SELECT last_claim_date FROM daily_rewards WHERE user_id=?",
-            (user_id,),
-        )
-        row = await cursor.fetchone()
-        if row:
-            return row[0]
-        return None
-
-
-async def update_daily_claim(user_id: int, claim_date: str) -> None:
-    async with aiosqlite.connect(str(DB_PATH)) as db:
-        cursor = await db.execute(
-            "SELECT 1 FROM daily_rewards WHERE user_id=?",
-            (user_id,),
-        )
-        if await cursor.fetchone():
-            await db.execute(
-                "UPDATE daily_rewards SET last_claim_date=? WHERE user_id=?",
-                (claim_date, user_id),
-            )
-        else:
-            await db.execute(
-                "INSERT INTO daily_rewards(user_id, last_claim_date) VALUES (?,?)",
-                (user_id, claim_date),
-            )
-        await db.commit()
