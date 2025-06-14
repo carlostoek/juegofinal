@@ -1,15 +1,18 @@
 from aiogram import Router, types
 from aiogram.filters import Command
+from datetime import datetime
 
 from config import ADMIN_IDS
 from services.purchase_service import PurchaseService
 from services.point_service import PointService
 from services.mission_service import MissionService
+from services.auction_service import AuctionService
 
 router = Router()
 purchase_service = PurchaseService()
 point_service = PointService()
 mission_service = MissionService()
+auction_service = AuctionService()
 
 
 @router.message(Command("sumarpuntos"))
@@ -56,3 +59,16 @@ async def cmd_activar_mision(message: types.Message):
     mission_id = int(parts[1])
     await mission_service.activate_mission(mission_id)
     await message.answer("Mision activada")
+
+
+@router.message(Command("crearsubasta"))
+async def cmd_crearsubasta(message: types.Message):
+    if message.from_user.id not in ADMIN_IDS:
+        return
+    parts = message.text.split(maxsplit=3)
+    if len(parts) < 4:
+        await message.answer("Uso: /crearsubasta [nombre] [descripcion] [fecha_fin]")
+        return
+    _, name, desc, end_time = parts
+    auction_id = await auction_service.create_auction(name, desc, datetime.utcnow().isoformat(), end_time)
+    await message.answer(f"Subasta creada ID {auction_id}")
