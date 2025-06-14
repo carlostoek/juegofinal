@@ -100,6 +100,63 @@ async def init_db() -> None:
             )
             """
         )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS purchases (
+                purchase_id INTEGER PRIMARY KEY,
+                user_id INTEGER,
+                amount_mxn REAL,
+                points_awarded INTEGER,
+                purchase_date TEXT,
+                is_renewal BOOLEAN,
+                is_early_renewal BOOLEAN
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS rewards (
+                reward_id INTEGER PRIMARY KEY,
+                name TEXT,
+                cost_points INTEGER,
+                description TEXT,
+                reward_type TEXT,
+                content_data TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_rewards (
+                user_id INTEGER,
+                reward_id INTEGER,
+                purchase_date TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS missions (
+                mission_id INTEGER PRIMARY KEY,
+                type TEXT,
+                description TEXT,
+                points_reward INTEGER,
+                completion_criteria TEXT,
+                active_from TEXT,
+                active_until TEXT
+            )
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_missions (
+                user_id INTEGER,
+                mission_id INTEGER,
+                completed BOOLEAN,
+                completion_date TEXT
+            )
+            """
+        )
         await db.commit()
 
 async def create_user(user_id: int, username: str | None, full_name: str) -> None:
